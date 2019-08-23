@@ -1,0 +1,101 @@
+<!DOCTYPE HTML>
+<html lang = "en">
+  <head>
+    <title>Vancouver Weather Forecast</title>
+     <meta charset = "UTF-8" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&display=swap" rel="stylesheet">
+     <link href="main.css" rel="stylesheet">
+    <script>
+      // city code for Vancouver in the open weather API
+      var vancouverCityCode = "6173331";
+
+      function loadWeather() {
+        // hide the current content
+        var mainContent = document.getElementById("main-content");
+        mainContent.classList.remove("loaded");
+        
+        // request weather update from our API
+        fetch("api/get_weather?city_id=" + vancouverCityCode)
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(list) {
+
+          var sectionHtml = '';
+          var currentDate = -1; // keep track of which date row you are adding to
+
+          // loop all entries returned by our API 
+          // (not Open Weather, see api/get_weather.php for details)
+          for(var i = 0; i < list.length; i++) {
+            var d = new Date(Date.parse(list[i].dt_txt));
+
+            // add a new row for each date
+            if(d.getDate() != currentDate) {
+              // 1st row being added doesn't need a closing tag
+              if(currentDate != -1)
+                sectionHtml += '</div>';
+              // print the new date for this row
+              sectionHtml += '<h1>' + d.toDateString() + '</h1><div class="date-row">';
+              currentDate = d.getDate();
+            }
+            // build a weather report box
+            
+            sectionHtml += '' +
+              '<div class="weather-section section-box">' +
+                  '<div class="box-heading">' +
+                    '<img class="weather-icon" src="http://openweathermap.org/img/wn/' + 
+                      list[i].weather[0].icon + '@2x.png" />' + 
+                    '<h2>' + d.toLocaleTimeString('en-US', {'timeStyle': 'short'}) + '</h2>' + 
+                  '</div>' + 
+                  '<div class="box-content">' +
+                    '<h3>Overview</h3>' +
+                    '<span id="overview">' + list[i].weather[0].main + '</span>' + 
+                  '</div>' + 
+                  '<div class="box-content">' +
+                    '<h3>Details</h3>' +
+                    '<span id="details">' + list[i].weather[0].description + '</span>' + 
+                  '</div>' +
+                  '<div class="box-content">' + 
+                    '<h3>Temperature</h3>' +
+                    '<span id="temp">' + list[i].main.temp + ' &#8457;</span>' + 
+                  '</div>' +
+                  '<div class="box-content">' + 
+                    '<h3>Humidity</h3>' + 
+                    '<span id="humid">' + list[i].main.humidity + '%</span>' + 
+                  '</div>' +
+                '</div>';
+              
+          }
+          // close out the final 'date-row' tag
+          sectionHtml += '</div>'; 
+          // replace the current main-table content
+          document.getElementById("main-table").innerHTML = sectionHtml;
+          mainContent.classList.add("loaded");
+        })
+        .catch(function() {
+            // This is where you run code if the server returns any errors
+            document.getElementById("main-table").innerHTML = "Error. Please refresh and try again."
+        });
+      }
+      // once the DOM is ready, load the weather
+      window.onload = () => loadWeather();
+    </script>
+  </head>
+  <body>
+    <!-- Top Menu -->
+    <header class="top-menu">
+      <nav role="navigation" >
+        <span class="page-title">Vancouver Weather Forecast</span>
+        &nbsp;
+        <span class="refresher" onclick="loadWeather()">refresh</span>
+      </nav>
+    </header>
+
+    <!-- Main Display -->
+    <main id="main-content" class="main-content">
+      <div class="main-table-wrapper">
+        <div id="main-table" class="main-table">
+        
+        </div>
+      </div>
+    </main>
+   </body>
+</html>
