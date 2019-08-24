@@ -12,6 +12,9 @@ to view html example run a python server in the root dir:
 
     python3 -m http.server
 
+Alternatively, put the files on a PHP server and visit index.html
+
+
 The app is made using React Native. 
 Run the packager using "npm start".
 Start a virtual device and run the app using Expo.
