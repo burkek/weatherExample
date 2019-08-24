@@ -14,6 +14,10 @@ to view html example run a python server in the root dir:
 
 Alternatively, put the files on a PHP server and visit index.html
 
+Run the api server using 
+
+    python3 api/server.py
+
 
 The app is made using React Native. 
 Run the packager using "npm start".
