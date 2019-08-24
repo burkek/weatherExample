@@ -9,13 +9,13 @@
       // city code for Vancouver in the open weather API
       var vancouverCityCode = "6173331";
 
-      function loadWeather() {
+      function loadWeather(usePython = true) {
         // hide the current content
         var mainContent = document.getElementById("main-content");
         mainContent.classList.remove("loaded");
-        
+        var url = usePython ? 'http://localhost:3000/get_weather' : 'api/get_weather'
         // request weather update from our API
-        fetch("api/get_weather?city_id=" + vancouverCityCode)
+        fetch(url + "?city_id=" + vancouverCityCode)
         .then((resp) => resp.json()) // Transform the data into json
         .then(function(list) {
 
